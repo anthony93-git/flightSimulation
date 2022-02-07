@@ -5,7 +5,6 @@
 #pip3 install adafruit-circuitpython-bmp3xxx
 #pip3 install adafruit-blinka
 #
-#
 import time
 import board
 import busio
