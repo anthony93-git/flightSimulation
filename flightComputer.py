@@ -5,6 +5,10 @@
 #pip3 install adafruit-circuitpython-bmp3xxx
 #pip3 install adafruit-blinka
 #
+#
+#arm device
+#terminate flight
+
 import time
 import board
 import busio
@@ -20,6 +24,10 @@ WIDTH = 128
 HEIGHT = 64
 BORDER = 5
 buzzer = "P9_11"
+recButtonLED = "P8_8"
+recButton = "P8_7"
+stopButtonLED = "P8_10"
+stopButton = "P8_9"
 i2c = board.I2C()
 bmp = adafruit_bmp3xx.BMP3XX_I2C(i2c)
 reset_pin = digitalio.DigitalInOut(board.P9_12)
@@ -36,6 +44,10 @@ draw4 = ImageDraw.Draw(image4)
 
 #Setting up GPIO and sensor attributes
 GPIO.setup(buzzer,GPIO.OUT)
+GPIO.setup(recButtonLED,GPIO.OUT)
+GPIO.setup(recButton, GPIO.IN)
+GPIO.setup(stopButtonLED, GPIO.OUT)
+GPIO.setup(stopButton, GPIO.IN)
 bmp.pressure_oversampling = 8
 bmp.temperature_oversampling = 2
 bmp.sea_levelpressure = 1013.25
@@ -125,6 +137,16 @@ oled.show()
 
 sleep(1)
 
+while(1):
+    if GPIO.input(recButton):
+        break
+    else:
+        GPIO.output(recButtonLED, GPIO.HIGH)
+        sleep(1)
+        GPIO.output(recButtonLED, GPIO.LOW)
+        sleep(1)
+
+GPIO.output(recButtonLED, GPIO.HIGH)
 
 for i in range (0,7):
     GPIO.output(buzzer, GPIO.HIGH)
@@ -136,35 +158,45 @@ sleep(3)
 
 
 while True:
+    if GPIO.input(stopButton):
+        break
+    else:
 #    f.write("Pressure: {:6.4f} hpa\nTemperature: {:5.2f} celsius".format(bmp.pressure,bmp.temperature))
 
-    print("Pressure: {:6.4f} hPa\nTemperature: {:5.2f} celsius".format(bmp.pressure,bmp.temperature))
+        print("Pressure: {:6.4f} hPa\nTemperature: {:5.2f} celsius".format(bmp.pressure,bmp.temperature))
     
-    print("Altitude: {:6.4f} meter\n".format(bmp.altitude))
+        print("Altitude: {:6.4f} meter\n".format(bmp.altitude))
     
-    f.write(time.strftime('%H:%M:%S %d/%m/%Y') + "," + "{:6.4f}".format(bmp.altitude) + "," + " {:6.4f}".format(bmp.temperature) + "," + " {:6.4f}\n".format(bmp.pressure))
+        f.write(time.strftime('%H:%M:%S %d/%m/%Y') + "," + "{:6.4f}".format(bmp.altitude) + "," + " {:6.4f}".format(bmp.temperature) + "," + " {:6.4f}\n".format(bmp.pressure))
     
-    oled.fill(0)
-    oled.show()
+        oled.fill(0)
+        oled.show()
 
     #creating black rectangle to prevent values from writing on top of each other
-    draw4.rectangle((37,70,150,18), outline=255, fill=0)
+        draw4.rectangle((37,70,150,18), outline=255, fill=0)
 
-    draw4.text((105,20),text13,font=font3,fill=255)
-    draw4.text((47,20),str("{:6.2f} ".format(bmp.temperature)),font=font3,fill=255)
+        draw4.text((105,20),text13,font=font3,fill=255)
+        draw4.text((47,20),str("{:6.2f} ".format(bmp.temperature)),font=font3,fill=255)
     
-    draw4.text((105,35),text14,font=font3,fill=255)
-    draw4.text((50,35),str("{:6.2f} ".format(bmp.pressure)),font=font3,fill=255)   
-    draw4.text((105,50),text15,font=font3,fill=255)
-    draw4.text((50,50),str("{:6.2f} ".format(bmp.altitude)),font=font3,fill=255)
-    oled.image(image4)
-    oled.show()
+        draw4.text((105,35),text14,font=font3,fill=255)
+        draw4.text((50,35),str("{:6.2f} ".format(bmp.pressure)),font=font3,fill=255)   
+        draw4.text((105,50),text15,font=font3,fill=255)
+        draw4.text((50,50),str("{:6.2f} ".format(bmp.altitude)),font=font3,fill=255)
+        oled.image(image4)
+        oled.show()
 
-    GPIO.output(buzzer, GPIO.HIGH)
-    sleep(.1)
-    GPIO.output(buzzer, GPIO.LOW)
-    sleep(2)
+#    if GPIO.input(stopButton):
+#        break
 
+#    else:
+        GPIO.output(buzzer, GPIO.HIGH)
+        GPIO.output(stopButtonLED, GPIO.HIGH)
+        sleep(.1)
+        GPIO.output(buzzer, GPIO.LOW)
+        GPIO.output(stopButtonLED, GPIO.LOW)
+        sleep(2)
+
+GPIO.output(stopButtonLED, GPIO.HIGH) 
 #    f.close()
 #    open("flightOutput.csv", "a")
 #    print("Temperature: "),print(temperature),print(" celsius")
