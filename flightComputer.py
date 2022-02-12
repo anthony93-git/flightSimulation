@@ -5,6 +5,8 @@
 #pip3 install adafruit-circuitpython-bmp3xxx
 #pip3 install adafruit-blinka
 #
+#pip3 install afafruit-circuitpython-ssd1306
+#apt-get install python3-pil
 #
 #arm device
 #terminate flight
