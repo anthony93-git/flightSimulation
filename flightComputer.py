@@ -225,8 +225,7 @@ while True:
 #    f.write("Pressure: {:6.4f} hpa\nTemperature: {:5.2f} celsius".format(bmp.pressure,bmp.temperature))
 
 #        print("Pressure: {:6.4f} hPa\nTemperature: {:5.2f} celsius".format(bmp.pressure,bmp.temperature))
-    
-#        print("Altitude: {:6.4f} meter\n".format(bmp.altitude))
+
     
         #f.write
         print(time.strftime('%H:%M:%S %d/%m/%Y') + "," + "{:6.4f}".format(bmp.altitude) + "," + " {:6.4f}".format(bmp.temperature) + "," + " {:6.4f}\n".format(bmp.pressure))
